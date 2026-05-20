@@ -14,7 +14,7 @@ export default function App() {
 
     try {
       // ⚠️ 나중에 2단계에서 만든 [내 EC2 IP 주소]로 여기를 바꾸면 됩니다!
-      const response = await fetch("http://i-05c8c7e99b307ffdf/upload.php", {
+      const response = await fetch("http://43.202.33.233/upload.php", {
         method: "POST",
         body: formData,
       });
