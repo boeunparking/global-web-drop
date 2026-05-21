@@ -1,4 +1,10 @@
 import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
+
+import { Amplify } from "aws-amplify";
+import outputs from "../amplify_outputs.json";
+import { Authenticator } from "@aws-amplify/ui-react";
+import "@aws-amplify/ui-react/styles.css";
 
 export default function App() {
   const [step, setStep] = useState(0);
@@ -37,106 +43,132 @@ export default function App() {
 
   // 1시간 검증용 심플 직관 UI (테일윈드 없이 작동하도록 순수 스타일링 적용)
   return (
-    <div
-      style={{
-        padding: "50px",
-        fontFamily: "sans-serif",
-        textAlign: "center",
-        backgroundColor: "#F8FAFC",
-        minHeight: "100vh",
-      }}
-    >
+    <div>
       <div
         style={{
-          maxWidth: "400px",
-          margin: "0 auto",
-          background: "white",
-          padding: "30px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
+          padding: "50px",
+          fontFamily: "sans-serif",
+          textAlign: "center",
+          backgroundColor: "#F8FAFC",
+          minHeight: "100vh",
         }}
       >
-        <h2 style={{ color: "#2563EB", marginBottom: "20px" }}>
-          🌐 GlobalShare MVP Test
-        </h2>
+        <div
+          style={{
+            maxWidth: "400px",
+            margin: "0 auto",
+            background: "white",
+            padding: "30px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.05)",
+          }}
+        >
+          <h2 style={{ color: "#2563EB", marginBottom: "20px" }}>
+            🌐 GlobalShare MVP Test
+          </h2>
 
-        {step === 0 && (
-          <div>
-            <p
-              style={{
-                fontSize: "14px",
-                color: "#64748B",
-                marginBottom: "20px",
-              }}
-            >
-              AWS EC2(PHP)와 실시간 통신을 테스트합니다.
-            </p>
-            <input
-              type="file"
-              onChange={handleFileUpload}
-              style={{
-                padding: "10px",
-                border: "1px dashed #2563EB",
-                borderRadius: "8px",
-                width: "100%",
-                cursor: "pointer",
-              }}
-            />
-          </div>
-        )}
-
-        {step === 1 && (
-          <div style={{ padding: "20px" }}>
-            <p style={{ fontWeight: "bold", color: "#2563EB" }}>
-              ⏳ AWS EC2 서버로 파일 전송 중...
-            </p>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div>
-            <p style={{ color: "green", fontWeight: "bold" }}>
-              ✅ 업로드 완료! (PHP 서버 응답 수신)
-            </p>
-            <div
-              style={{
-                marginTop: "15px",
-                padding: "10px",
-                background: "#F1F5F9",
-                borderRadius: "6px",
-                wordBreak: "break-all",
-              }}
-            >
-              <a
-                href={downloadLink}
-                target="_blank"
-                rel="noreferrer"
+          {step === 0 && (
+            <div>
+              <p
                 style={{
-                  color: "#2563EB",
-                  textDecoration: "underline",
                   fontSize: "14px",
+                  color: "#64748B",
+                  marginBottom: "20px",
                 }}
               >
-                {downloadLink}
-              </a>
+                AWS EC2(PHP)와 실시간 통신을 테스트합니다.
+              </p>
+              <input
+                type="file"
+                onChange={handleFileUpload}
+                style={{
+                  padding: "10px",
+                  border: "1px dashed #2563EB",
+                  borderRadius: "8px",
+                  width: "100%",
+                  cursor: "pointer",
+                }}
+              />
             </div>
+          )}
+
+          {step === 1 && (
+            <div style={{ padding: "20px" }}>
+              <p style={{ fontWeight: "bold", color: "#2563EB" }}>
+                ⏳ AWS EC2 서버로 파일 전송 중...
+              </p>
+            </div>
+          )}
+
+          {step === 2 && (
+            <div>
+              <p style={{ color: "green", fontWeight: "bold" }}>
+                ✅ 업로드 완료! (PHP 서버 응답 수신)
+              </p>
+              <div
+                style={{
+                  marginTop: "15px",
+                  padding: "10px",
+                  background: "#F1F5F9",
+                  borderRadius: "6px",
+                  wordBreak: "break-all",
+                }}
+              >
+                <a
+                  href={downloadLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    color: "#2563EB",
+                    textDecoration: "underline",
+                    fontSize: "14px",
+                  }}
+                >
+                  {downloadLink}
+                </a>
+              </div>
+              <button
+                onClick={() => setStep(0)}
+                style={{
+                  marginTop: "15px",
+                  padding: "8px 16px",
+                  background: "#64748B",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                }}
+              >
+                다시 하기
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+      <Authenticator>
+        {({ signOut, user }) => (
+          <main style={{ padding: "20px", fontFamily: "sans-serif" }}>
+            {/* 로그인 성공 시 유저 정보에 접근 가능 */}
+            <h1>안녕하세요, {user?.username}님! 👋</h1>
+            <p>성공적으로 Cognito 로그인 연동이 완료되었습니다.</p>
+
+            {/* 로그아웃 버튼 (Amplify가 제공하는 signOut 함수 호출) */}
             <button
-              onClick={() => setStep(0)}
+              onClick={signOut}
               style={{
-                marginTop: "15px",
-                padding: "8px 16px",
-                background: "#64748B",
+                padding: "10px 20px",
+                backgroundColor: "#ff4d4d",
                 color: "white",
                 border: "none",
-                borderRadius: "6px",
+                borderRadius: "5px",
                 cursor: "pointer",
               }}
             >
-              다시 하기
+              로그아웃
             </button>
-          </div>
+          </main>
         )}
-      </div>
+      </Authenticator>
     </div>
   );
 }
